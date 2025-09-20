@@ -1,12 +1,19 @@
 import { Suspense } from "react";
-import { SearchInput, PokemonCard } from "@/features/pokemon/components";
+import { SearchInput, SearchResults } from "@/features/pokemon/components";
 import { apolloClient } from "@/libs/apollo-client";
 import {
   PokemonsDocument,
   type PokemonsQuery,
 } from "@/types/generated/graphql";
 
-export default async function Home() {
+type HomeProps = {
+  readonly searchParams: Promise<{ search?: string }>;
+};
+
+export default async function Home({ searchParams }: HomeProps) {
+  const searchParamsProps = await searchParams;
+  const searchTerm = searchParamsProps.search;
+
   const { data, error } = await apolloClient.query<PokemonsQuery>({
     query: PokemonsDocument,
     variables: { first: 20 },
@@ -21,15 +28,10 @@ export default async function Home() {
           <SearchInput />
         </Suspense>
       </div>
-      <div className="gap-2 sm:gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 py-4">
-        {data?.pokemons && (
-          <>
-            {data.pokemons.map((pokemon) => (
-              <PokemonCard key={pokemon?.id} {...pokemon} />
-            ))}
-          </>
-        )}
-      </div>
+
+      {data?.pokemons && (
+        <SearchResults pokemons={data.pokemons} searchTerm={searchTerm} />
+      )}
     </main>
   );
 }

@@ -3,10 +3,8 @@ import { PokemonCardSkeleton } from "@/features/pokemon/components";
 export default function Loading() {
   return (
     <div className="flex justify-center items-center p-6 min-h-screen">
-      <div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full max-w-4xl">
-        {Array.from({ length: 6 }, (_, index) => (
-          <PokemonCardSkeleton key={`skeleton-${index}`} />
-        ))}
+      <div className="w-full max-w-2xl">
+        <PokemonCardSkeleton />
       </div>
     </div>
   );

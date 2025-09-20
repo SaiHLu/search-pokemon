@@ -29,7 +29,7 @@ export function SearchInput() {
   useEffect(() => {
     const timer = setTimeout(() => {
       debouncedUpdateURL(searchInput);
-    }, 2000);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [searchInput, debouncedUpdateURL]);
