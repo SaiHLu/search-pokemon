@@ -1,38 +1,20 @@
 "use client";
 
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useDebounce, useUpdateUrl } from "../hooks";
 
 export function SearchInput() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
   const searchQuery = searchParams.get("search") || "";
 
   const [searchInput, setSearchInput] = useState(searchQuery);
-
-  const debouncedUpdateURL = useCallback(
-    (value: string) => {
-      const params = new URLSearchParams(searchParams);
-
-      if (value) {
-        params.set("search", value);
-      } else {
-        params.delete("search");
-      }
-
-      router.push(`${pathname}?${params.toString()}`);
-    },
-    [searchParams, router, pathname]
-  );
+  const debouncedValue = useDebounce(searchInput, 300);
+  const updateUrl = useUpdateUrl();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      debouncedUpdateURL(searchInput);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchInput, debouncedUpdateURL]);
+    updateUrl(debouncedValue);
+  }, [debouncedValue, updateUrl]);
 
   return (
     <input
